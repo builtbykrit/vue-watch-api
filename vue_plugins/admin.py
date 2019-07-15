@@ -8,17 +8,24 @@ from vue_plugins.models import VuePlugin
 
 
 class VuePluginAdminExtra(ModelAdmin):
+    list_display = ['repo_url', 'name', 'tag_list']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('tags')
+
+    def tag_list(self, obj):
+        return u", ".join(o.name for o in obj.tags.all())
 
     form = VuePluginForm
 
     add_fieldsets = (
-            (_('Repository Info'), {'fields': ('name', 'repo_url',)}),
+            (_('Repository Info'), {'fields': ('name', 'repo_url', 'tags')}),
             (_('Manual Review Fields'),
              {'fields': ('has_demo', 'has_meaningful_tests', 'has_example_code', 'has_api_documented', 'has_ci',)}),
     )
 
     fieldsets = (
-            (_('Repository Info'), {'fields': ('name', 'repo_url',)}),
+            (_('Repository Info'), {'fields': ('name', 'repo_url', 'tags')}),
             (_('Manual Review Fields'),
              {'fields': ('has_demo', 'has_meaningful_tests', 'has_example_code', 'has_api_documented', 'has_ci',)}),
             (_('Automatic Review Fields'),
