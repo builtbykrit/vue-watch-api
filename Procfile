@@ -1,0 +1,1 @@
+web: gunicorn vue_plugin_scoring.wsgi
