@@ -8,6 +8,7 @@ from vue_plugins.models import VuePlugin
 
 
 class VuePluginAdminExtra(ModelAdmin):
+    actions = ['update_plugin_info']
     list_display = ['repo_url', 'name', 'tag_list']
 
     def get_queryset(self, request):
@@ -40,6 +41,13 @@ class VuePluginAdminExtra(ModelAdmin):
         if not obj:
             return self.add_fieldsets
         return super(VuePluginAdminExtra, self).get_fieldsets(request, obj)
+
+    def update_plugin_info(self, request, queryset):
+        for plugin in list(queryset):
+            plugin.update_info_from_github()
+
+        plugin_count = len(queryset)
+        self.message_user(request, "%s plugins(s) were updated!" % plugin_count)
 
 
 admin.site.register(VuePlugin, VuePluginAdminExtra)
