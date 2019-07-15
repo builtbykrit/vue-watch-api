@@ -1,12 +1,12 @@
 from django.db import models
 
 # Create your models here.
-from vue_plugin_scoring.vue_plugins.validators import validate_zero_or_greater, validate_one_or_less
+from vue_plugins.validators import validate_zero_or_greater, validate_one_or_less
 
 
 class VuePlugin(models.Model):
     name = models.TextField(max_length=512, null=False, blank=True)
-    repo_url = models.TextField(max_length=1024, blank=False, null=False)
+    repo_url = models.URLField(max_length=1024, blank=False, null=False, )
 
     # Manual Scoring Fields
     has_demo = models.IntegerField(validators=([validate_zero_or_greater, validate_one_or_less]),
@@ -26,6 +26,12 @@ class VuePlugin(models.Model):
     num_contributors = models.IntegerField(default=0)
     num_downloads = models.IntegerField(default=0)
     num_stars = models.IntegerField(default=0)
+
+    # Score
+    score = models.DecimalField(default=0, decimal_places=2, max_digits=5)
+
+    def __str__(self):
+        return '{} - {}'.format(self.name, self.repo_url)
 
     def update_info_from_github(self):
         pass
