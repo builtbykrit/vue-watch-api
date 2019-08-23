@@ -1,2 +1,2 @@
-web: gunicorn vue_plugin_scoring.wsgi
+web: gunicorn vue_watch_api.wsgi
 release: python manage.py migrate

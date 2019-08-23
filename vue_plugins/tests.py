@@ -7,7 +7,7 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 
 # Create your tests here.
-from vue_plugin_scoring.test_helpers import create_vue_plugin
+from vue_watch_api.test_helpers import create_vue_plugin
 from vue_plugins.models import VuePlugin
 
 
@@ -52,10 +52,10 @@ class VuePluginScoreTests(TestCase):
             has_meaningful_tests=False
         )
 
-        plugin.last_release_date = timezone.now() - relativedelta.relativedelta(months=13)
+        plugin.last_release_date = timezone.now().date() - relativedelta.relativedelta(months=13)
         self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for release date outside of a year')
 
-        plugin.last_release_date = timezone.now() - relativedelta.relativedelta(months=11)
+        plugin.last_release_date = timezone.now().date() - relativedelta.relativedelta(months=11)
         self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for release date within the last year')
 
     def test_num_commits(self):
