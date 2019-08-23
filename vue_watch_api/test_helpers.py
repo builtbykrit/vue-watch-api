@@ -12,6 +12,7 @@ def create_vue_plugin(name, description=None):
         name=name,
         description=description,
         repo_url=fake.url(),
+        repo_readme=fake.text(),
         has_demo=fake.boolean(),
         has_meaningful_tests=fake.boolean(),
         has_api_documented=fake.boolean(),

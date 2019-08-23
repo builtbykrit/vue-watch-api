@@ -112,6 +112,10 @@ class VuePluginListRetrieveTests(APITestCase):
         self.assertIsNone(response_json['next'])
         self.assertIsNone(response_json['previous'])
 
+        first_plugin = response_json['results'][0]
+
+        self.assertNotIn('repo_readme', first_plugin, "Repo readmes should not be returned in a list")
+
     def test_find_plugin_by_name(self):
         """"Retrieving a list of plugins with search should return ones that have a partial name match"""
 
@@ -148,6 +152,7 @@ class VuePluginListRetrieveTests(APITestCase):
         self.assertEqual(response_json["name"], self.plugin1.name)
         self.assertEqual(response_json["description"], self.plugin1.description)
         self.assertEqual(response_json["repo_url"], self.plugin1.repo_url)
+        self.assertEqual(response_json["repo_readme"], self.plugin1.repo_readme)
         self.assertEqual(response_json["has_ci"], self.plugin1.has_ci == 1)
         self.assertEqual(response_json["has_meaningful_tests"], self.plugin1.has_meaningful_tests == 1)
         self.assertEqual(response_json["has_example_code"], self.plugin1.has_example_code == 1)

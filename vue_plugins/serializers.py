@@ -17,4 +17,18 @@ class VuePluginSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = VuePlugin
-        fields = '__all__'
+        fields = ('id', 'created_at', 'updated_at', 'name', 'description', 'repo_url', 'repo_readme', 'tags',
+                  'has_meaningful_tests', 'has_example_code', 'has_api_documented', 'has_ci', 'has_demo',
+                  'last_release_tag_name', 'last_release_date', 'num_commits_recently', 'num_contributors',
+                  'num_downloads_recently', 'num_stars', 'score'
+                  )
+
+
+class VuePluginListSerializer(VuePluginSerializer):
+    class Meta:
+        model = VuePlugin
+        fields = ('id', 'created_at', 'updated_at', 'name', 'description', 'repo_url', 'tags',
+                  'has_meaningful_tests', 'has_example_code', 'has_api_documented', 'has_ci', 'has_demo',
+                  'last_release_tag_name', 'last_release_date', 'num_commits_recently', 'num_contributors',
+                  'num_downloads_recently', 'num_stars', 'score'
+                  )

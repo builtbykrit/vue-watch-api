@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
@@ -22,6 +23,7 @@ class VuePlugin(models.Model):
     npm_package_name = models.TextField(max_length=512, null=False, blank=True)
 
     repo_url = models.URLField(max_length=1024, blank=False, null=False, )
+    repo_readme = models.URLField(max_length=131072, blank=True, null=False)
     tags = TaggableManager()
 
     # Manual Scoring Fields
@@ -72,8 +74,6 @@ class VuePlugin(models.Model):
 
         return total
 
-
-
     def __str__(self):
         return '{} - {}'.format(self.name, self.repo_url)
 
@@ -97,6 +97,16 @@ class VuePlugin(models.Model):
                 self.name = repo.name
 
             self.description = repo.description
+            try:
+                readme = repo.get_readme()
+                try:
+                    decoded_readme = base64.b64decode(readme.content)
+                    readme_string = decoded_readme.decode("utf-8")
+                    self.repo_readme = readme_string
+                except Exception as e:
+                    print('Error decoding readme file from repo {} due to {}.'.format(repo.name, str(e)))
+            except UnknownObjectException:
+                print('Repo {} does not have a readme'.format(repo.name))
 
             try:
                 latest_release = repo.get_latest_release()
@@ -123,4 +133,3 @@ class VuePlugin(models.Model):
                 npm_package_name = package_json.get('name', None)
                 if npm_package_name:
                     self.npm_package_name = npm_package_name
-

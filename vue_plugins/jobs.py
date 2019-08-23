@@ -12,6 +12,7 @@ def update_plugins_info(plugins):
     for plugin in plugins:
         try:
             plugin.update_external_info()
+            plugin.save()
         except Exception as e:
             # Log exception and continue
             error_count += 1
