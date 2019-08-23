@@ -23,7 +23,10 @@ class VuePlugin(models.Model):
     npm_package_name = models.TextField(max_length=512, null=False, blank=True)
 
     repo_url = models.URLField(max_length=1024, blank=False, null=False, )
-    repo_readme = models.URLField(max_length=131072, blank=True, null=False)
+    repo_readme = models.CharField(max_length=131072, blank=True, null=False)
+    repo_license_name = models.CharField(max_length=256, blank=True, null=False)
+    repo_num_open_issues = models.IntegerField(default=0)
+
     tags = TaggableManager()
 
     # Manual Scoring Fields
@@ -98,6 +101,15 @@ class VuePlugin(models.Model):
 
             self.description = repo.description
             try:
+                license_file_data = repo.get_license()
+                license = license_file_data.license
+                if license:
+                    self.repo_license_name = license.name
+
+            except UnknownObjectException:
+                print('Repo {} does not have a license'.format(repo.name))
+
+            try:
                 readme = repo.get_readme()
                 try:
                     decoded_readme = base64.b64decode(readme.content)
@@ -107,6 +119,14 @@ class VuePlugin(models.Model):
                     print('Error decoding readme file from repo {} due to {}.'.format(repo.name, str(e)))
             except UnknownObjectException:
                 print('Repo {} does not have a readme'.format(repo.name))
+
+            try:
+                issues = repo.get_issues(state='open')
+                if issues:
+                    self.repo_num_open_issues = issues.totalCount
+            except UnknownObjectException:
+                print('Repo {} does not have any issues'.format(repo.name))
+                self.last_release_date = None
 
             try:
                 latest_release = repo.get_latest_release()

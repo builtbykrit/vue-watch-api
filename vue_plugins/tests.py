@@ -153,6 +153,8 @@ class VuePluginListRetrieveTests(APITestCase):
         self.assertEqual(response_json["description"], self.plugin1.description)
         self.assertEqual(response_json["repo_url"], self.plugin1.repo_url)
         self.assertEqual(response_json["repo_readme"], self.plugin1.repo_readme)
+        self.assertEqual(response_json["repo_num_open_issues"], self.plugin1.repo_num_open_issues)
+        self.assertEqual(response_json["repo_license_name"], self.plugin1.repo_license_name)
         self.assertEqual(response_json["has_ci"], self.plugin1.has_ci == 1)
         self.assertEqual(response_json["has_meaningful_tests"], self.plugin1.has_meaningful_tests == 1)
         self.assertEqual(response_json["has_example_code"], self.plugin1.has_example_code == 1)
