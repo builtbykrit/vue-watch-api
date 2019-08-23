@@ -41,7 +41,7 @@ class VuePluginAdminExtra(ModelAdmin):
 
     readonly_fields = (
     'last_release_date', 'npm_package_name', 'last_release_tag_name', 'num_commits_recently', 'num_contributors',
-    'num_downloads_recently', 'num_stars', 'score')
+    'num_downloads_recently', 'num_stars', 'score', 'repo_license_name', 'repo_num_open_issues')
 
     def get_fieldsets(self, request, obj=None):
         if not obj:

@@ -45,11 +45,11 @@ class VuePlugin(models.Model):
 
     # Automated Scoring Fields
     last_release_date = models.DateField(null=True, blank=True)
-    # Commit count for last 3 months
-    num_commits_recently = models.IntegerField(default=0)
+    # Commit count for last 30 days
+    num_commits_recently = models.IntegerField(default=0, help_text='Commit count for last 30 days')
     num_contributors = models.IntegerField(default=0)
     # Download count for last 30 days
-    num_downloads_recently = models.IntegerField(default=0)
+    num_downloads_recently = models.IntegerField(default=0, help_text='NPM download count for last 30 days')
     num_stars = models.IntegerField(default=0)
 
     # Score
@@ -66,8 +66,8 @@ class VuePlugin(models.Model):
         if self.last_release_date:
             total += int(self.last_release_date + relativedelta(years=1) >= timezone.now().date())
 
-        # Has there been more than five commits in the last three months?
-        total += int(self.num_commits_recently > 5)
+        # Has there been more than two commits in the last 30 days?
+        total += int(self.num_commits_recently > 2)
 
         # Is there more than one contributor on the project?
         total += int(self.num_contributors > 1)
@@ -94,7 +94,7 @@ class VuePlugin(models.Model):
         client = GithubApiClient()
         repo = client.get_repo_info(self.repo_url)
         if repo:
-            three_months_ago = datetime.now() - relativedelta(months=+3)
+            one_month_ago = datetime.now() - relativedelta(months=1)
 
             if not self.name or self.name == '':
                 self.name = repo.name
@@ -137,7 +137,7 @@ class VuePlugin(models.Model):
                 print('Repo {} does not have any releases'.format(repo.name))
                 self.last_release_date = None
 
-            commits = repo.get_commits(since=three_months_ago)
+            commits = repo.get_commits(since=one_month_ago)
             if commits:
                 self.num_commits_recently = commits.totalCount
 
