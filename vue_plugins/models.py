@@ -59,7 +59,7 @@ class VuePlugin(models.Model):
 
         # Has there a been a new release in the last year?
         if self.last_release_date:
-            total += int(self.last_release_date + relativedelta(years=1) >= timezone.now())
+            total += int(self.last_release_date + relativedelta(years=1) >= timezone.now().date())
 
         # Has there been more than five commits in the last three months?
         total += int(self.num_commits_recently > 5)
@@ -86,7 +86,6 @@ class VuePlugin(models.Model):
         if self.npm_package_name:
             download_count = client.get_download_count(self.npm_package_name)
             self.num_downloads_recently = download_count
-            self.save()
 
     def _update_info_from_github(self):
         client = GithubApiClient()
@@ -124,5 +123,4 @@ class VuePlugin(models.Model):
                 npm_package_name = package_json.get('name', None)
                 if npm_package_name:
                     self.npm_package_name = npm_package_name
-            self.save()
 

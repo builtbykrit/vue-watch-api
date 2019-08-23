@@ -49,4 +49,4 @@ def update_plugins_scores():
             score += 1
 
         plugin.score = score
-        score.save()
+        plugin.save()
