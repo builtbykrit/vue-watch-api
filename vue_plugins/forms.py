@@ -28,7 +28,11 @@ class VuePluginForm(ModelForm):
         )
 
     def save(self, commit=True):
-        vue_plugin = super(ModelForm, self).save(commit=commit)
+        vue_plugin = super(ModelForm, self).save(commit=False)
+        # Remove trailing slashes
+        vue_plugin.repo_url = vue_plugin.repo_url.rstrip('/')
+        if commit:
+            vue_plugin.save()
 
         vue_plugin.update_external_info()
         return vue_plugin

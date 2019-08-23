@@ -2,8 +2,8 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 from django.db import models
-
 # Create your models here.
+from github import UnknownObjectException
 from taggit.managers import TaggableManager
 
 from external_apis.api_github import GithubApiClient
@@ -72,9 +72,13 @@ class VuePlugin(models.Model):
 
             self.description = repo.description
 
-            latest_release = repo.get_latest_release()
-            if latest_release:
-                self.last_release_date = latest_release.published_at
+            try:
+                latest_release = repo.get_latest_release()
+                if latest_release:
+                    self.last_release_date = latest_release.published_at
+            except UnknownObjectException:
+                print('Repo {} does not have any releases'.format(repo.name))
+                self.last_release_date = None
 
             commits = repo.get_commits(since=three_months_ago)
             if commits:
@@ -93,3 +97,4 @@ class VuePlugin(models.Model):
                 if npm_package_name:
                     self.npm_package_name = npm_package_name
             self.save()
+
