@@ -69,10 +69,10 @@ class VuePluginScoreTests(TestCase):
             has_meaningful_tests=False
         )
 
-        plugin.num_commits_recently = 5
+        plugin.num_commits_recently = 2
         self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for less than 6 recent commits')
 
-        plugin.num_commits_recently = 6
+        plugin.num_commits_recently = 3
         self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for more than 5 commits')
 
     def test_num_contributors(self):
