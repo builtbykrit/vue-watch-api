@@ -35,6 +35,8 @@ class VuePlugin(models.Model):
                                              null=False)
     has_ci = models.IntegerField(validators=([validate_zero_or_greater, validate_one_or_less]), blank=False, null=False)
 
+    last_release_tag_name = models.CharField(max_length=256, blank=True)
+
     # Automated Scoring Fields
     last_release_date = models.DateField(null=True, blank=True)
     # Commit count for last 3 months
@@ -76,6 +78,7 @@ class VuePlugin(models.Model):
                 latest_release = repo.get_latest_release()
                 if latest_release:
                     self.last_release_date = latest_release.published_at
+                    self.last_release_tag_name = latest_release.tag_name
             except UnknownObjectException:
                 print('Repo {} does not have any releases'.format(repo.name))
                 self.last_release_date = None
