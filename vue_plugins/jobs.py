@@ -19,3 +19,8 @@ def update_plugins_info(plugins):
 
     plugin_count = len(plugins)
     return "{} out of {} plugins(s) were updated!".format(plugin_count - error_count, plugin_count)
+
+def update_scores():
+    """Updates the scores for all plugins"""
+
+    plugins = Plugin.objects.all()

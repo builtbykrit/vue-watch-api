@@ -3,6 +3,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.db import models
 # Create your models here.
+from django.utils import timezone
 from github import UnknownObjectException
 from taggit.managers import TaggableManager
 
@@ -48,6 +49,30 @@ class VuePlugin(models.Model):
 
     # Score
     score = models.DecimalField(default=0, decimal_places=2, max_digits=5)
+
+    @property
+    def non_comparative_score_total(self):
+        """ Sum up the fields that arent in comparison with all the plugins"""
+
+        # Sum the manual review fields
+        total = self.has_ci + self.has_meaningful_tests + self.has_example_code + self.has_api_documented
+
+        # Has there a been a new release in the last year?
+        if self.last_release_date:
+            total += int(self.last_release_date + relativedelta(years=1) >= timezone.now())
+
+        # Has there been more than five commits in the last three months?
+        total += int(self.num_commits_recently > 5)
+
+        # Is there more than one contributor on the project?
+        total += int(self.num_contributors > 1)
+
+        # Are there more than seven contributors on the project?
+        total += int(self.num_contributors > 7)
+
+        return total
+
+
 
     def __str__(self):
         return '{} - {}'.format(self.name, self.repo_url)
