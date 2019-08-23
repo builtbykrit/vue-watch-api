@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import ModelAdmin
 
 from vue_plugins.forms import VuePluginForm
+from vue_plugins.jobs import update_plugins_info
 from vue_plugins.models import VuePlugin
 
 
@@ -43,19 +44,8 @@ class VuePluginAdminExtra(ModelAdmin):
         return super(VuePluginAdminExtra, self).get_fieldsets(request, obj)
 
     def update_plugin_info(self, request, queryset):
-        error_count = 0
-        for plugin in list(queryset):
-            try:
-                plugin.update_external_info()
-            except Exception as e:
-                # Log exception and continue
-                error_count += 1
-                import traceback
-                traceback.print_exc()
-                print('plugin {} failed for reason: {}'.format(plugin.repo_url, str(e)))
-
-        plugin_count = len(queryset)
-        self.message_user(request, "%s plugins(s) were updated!" % (plugin_count - error_count))
+        result = update_plugins_info(list(queryset))
+        self.message_user(request, result)
 
 
 admin.site.register(VuePlugin, VuePluginAdminExtra)
