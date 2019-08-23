@@ -7,6 +7,7 @@ from django.db import models
 from taggit.managers import TaggableManager
 
 from external_apis.api_github import GithubApiClient
+from external_apis.api_npm import NpmApiClient
 from vue_plugins.validators import validate_zero_or_greater, validate_one_or_less
 
 
@@ -17,7 +18,9 @@ class VuePlugin(models.Model):
     name = models.TextField(max_length=512, null=False, blank=True)
     description = models.TextField(max_length=512, null=False, blank=True)
 
-    repo_url = models.URLField(max_length=1024, blank=False, null=False,)
+    npm_package_name = models.TextField(max_length=512, null=False, blank=True)
+
+    repo_url = models.URLField(max_length=1024, blank=False, null=False, )
     tags = TaggableManager()
 
     # Manual Scoring Fields
@@ -47,7 +50,18 @@ class VuePlugin(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.name, self.repo_url)
 
-    def update_info_from_github(self):
+    def update_external_info(self):
+        self._update_info_from_github()
+        self._update_info_from_npm()
+
+    def _update_info_from_npm(self):
+        client = NpmApiClient()
+        if self.npm_package_name:
+            download_count = client.get_download_count(self.npm_package_name)
+            self.num_downloads_recently = download_count
+            self.save()
+
+    def _update_info_from_github(self):
         client = GithubApiClient()
         repo = client.get_repo_info(self.repo_url)
         if repo:
@@ -72,9 +86,10 @@ class VuePlugin(models.Model):
 
             self.num_stars = repo.stargazers_count
 
+            package_json = client.get_package_json_content(repo)
+
+            if package_json:
+                npm_package_name = package_json.get('name', None)
+                if npm_package_name:
+                    self.npm_package_name = npm_package_name
             self.save()
-
-
-
-
-

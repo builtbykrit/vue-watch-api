@@ -9,7 +9,7 @@ from vue_plugins.models import VuePlugin
 
 class VuePluginAdminExtra(ModelAdmin):
     actions = ['update_plugin_info']
-    list_display = ['name', 'repo_url', 'tag_list', 'last_release_date', 'num_commits_recently', 'num_contributors', 'num_stars']
+    list_display = ['name', 'repo_url', 'tag_list', 'last_release_date', 'num_commits_recently', 'num_contributors', 'num_stars', 'num_downloads_recently']
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')
@@ -26,7 +26,7 @@ class VuePluginAdminExtra(ModelAdmin):
     )
 
     fieldsets = (
-            (_('Repository Info'), {'fields': ('name', 'repo_url', 'tags')}),
+            (_('Repository Info'), {'fields': ('name', 'repo_url', 'tags', 'npm_package_name')}),
             (_('Manual Review Fields'),
              {'fields': ('has_demo', 'has_meaningful_tests', 'has_example_code', 'has_api_documented', 'has_ci',)}),
             (_('Automatic Review Fields'),
@@ -46,10 +46,12 @@ class VuePluginAdminExtra(ModelAdmin):
         error_count = 0
         for plugin in list(queryset):
             try:
-                plugin.update_info_from_github()
+                plugin.update_external_info()
             except Exception as e:
                 # Log exception and continue
                 error_count += 1
+                import traceback
+                traceback.print_exc()
                 print('plugin {} failed for reason: {}'.format(plugin.repo_url, str(e)))
 
         plugin_count = len(queryset)
