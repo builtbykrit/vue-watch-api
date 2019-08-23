@@ -1,5 +1,4 @@
 name: Django Workflow
-secrets: ["SECRET_KEY"]
 on: [push]
 
 jobs:
@@ -21,5 +20,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Test
+      env: 
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         python manage.py test
