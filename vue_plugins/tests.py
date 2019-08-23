@@ -66,6 +66,7 @@ class VuePluginListRetrieveTests(APITestCase):
         self.assertEqual(response_json["has_api_documented"], self.plugin1.has_api_documented == 1)
 
         self.assertEqual(response_json["last_release_date"], self.plugin1.last_release_date)
+        self.assertEqual(response_json["last_release_tag_name"], self.plugin1.last_release_tag_name)
         self.assertEqual(response_json["num_commits_recently"], self.plugin1.num_commits_recently)
         self.assertEqual(response_json["num_contributors"], self.plugin1.num_contributors)
         self.assertEqual(response_json["num_downloads_recently"], self.plugin1.num_downloads_recently)

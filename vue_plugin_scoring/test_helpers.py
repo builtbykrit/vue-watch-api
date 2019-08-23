@@ -18,6 +18,7 @@ def create_vue_plugin(name, description=None):
         has_ci=fake.boolean(),
         has_example_code=fake.boolean(),
         last_release_date=fake.date(),
+        last_release_tag_name=fake.word(),
         num_commits_recently=fake.pyint(max_value=100),
         num_contributors=fake.pyint(max_value=100),
         num_downloads_recently=fake.pyint(max_value=10000),
