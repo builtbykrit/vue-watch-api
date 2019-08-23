@@ -34,9 +34,11 @@ class VuePlugin(models.Model):
 
     # Automated Scoring Fields
     last_release_date = models.DateField(null=True, blank=True)
+    # Commit count for last 3 months
     num_commits_recently = models.IntegerField(default=0)
     num_contributors = models.IntegerField(default=0)
-    num_downloads = models.IntegerField(default=0)
+    # Download count for last 30 days
+    num_downloads_recently = models.IntegerField(default=0)
     num_stars = models.IntegerField(default=0)
 
     # Score

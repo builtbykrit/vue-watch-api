@@ -30,12 +30,12 @@ class VuePluginAdminExtra(ModelAdmin):
             (_('Manual Review Fields'),
              {'fields': ('has_demo', 'has_meaningful_tests', 'has_example_code', 'has_api_documented', 'has_ci',)}),
             (_('Automatic Review Fields'),
-             {'fields': ('last_release_date', 'num_commits_recently', 'num_contributors', 'num_downloads', 'num_stars',)}),
+             {'fields': ('last_release_date', 'num_commits_recently', 'num_contributors', 'num_downloads_recently', 'num_stars',)}),
             (_('Score'),
              {'fields': ('score',)}),
     )
 
-    readonly_fields = ('last_release_date', 'num_commits_recently', 'num_contributors', 'num_downloads', 'num_stars', 'score')
+    readonly_fields = ('last_release_date', 'num_commits_recently', 'num_contributors', 'num_downloads_recently', 'num_stars', 'score')
 
     def get_fieldsets(self, request, obj=None):
         if not obj:
