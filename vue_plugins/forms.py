@@ -30,5 +30,5 @@ class VuePluginForm(ModelForm):
     def save(self, commit=True):
         vue_plugin = super(ModelForm, self).save(commit=commit)
 
-        vue_plugin.update_info_from_github()
+        vue_plugin.update_external_info()
         return vue_plugin
