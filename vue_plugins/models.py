@@ -15,7 +15,9 @@ class VuePlugin(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     name = models.TextField(max_length=512, null=False, blank=True)
-    repo_url = models.URLField(max_length=1024, blank=False, null=False, )
+    description = models.TextField(max_length=512, null=False, blank=True)
+
+    repo_url = models.URLField(max_length=1024, blank=False, null=False,)
     tags = TaggableManager()
 
     # Manual Scoring Fields
@@ -51,6 +53,8 @@ class VuePlugin(models.Model):
 
             if not self.name or self.name == '':
                 self.name = repo.name
+
+            self.description = repo.description
 
             latest_release = repo.get_latest_release()
             if latest_release:
