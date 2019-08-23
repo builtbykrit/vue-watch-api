@@ -16,7 +16,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -29,10 +28,9 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:8000",
+    "http://localhost:8080",
     "https://vue-plugin-scoring-api.herokuapp.com",
 ]
-
 
 # Application definition
 
@@ -48,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_extensions',
-'taggit_serializer',
+    'taggit_serializer',
 ]
 
 MIDDLEWARE = [
@@ -82,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'vue_plugin_scoring.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -92,7 +89,6 @@ DATABASES = {
         'NAME': 'vue_plugin_scoring',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -112,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -126,7 +121,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
@@ -139,4 +133,5 @@ REST_FRAMEWORK = {
 
 if os.environ['DJANGO_ENV'] != 'development':
     import django_heroku
+
     django_heroku.settings(locals())
