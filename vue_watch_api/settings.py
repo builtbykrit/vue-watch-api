@@ -88,7 +88,10 @@ WSGI_APPLICATION = 'vue_watch_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'vue_watch',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', None),
+        'HOST': os.environ.get('DB_HOST')
     }
 }
 
