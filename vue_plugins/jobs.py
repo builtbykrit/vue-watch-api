@@ -1,5 +1,10 @@
 from time import sleep
 
+import numpy as np
+from django.db import transaction
+
+from vue_plugins.models import VuePlugin
+
 
 def update_plugins_info(plugins):
     """ Updates the info for all passed in plugins and returns a string of results"""
@@ -17,5 +22,31 @@ def update_plugins_info(plugins):
         # Make a max of 5 requests per second
         sleep(0.2)
 
+    update_plugins_scores()
     plugin_count = len(plugins)
     return "{} out of {} plugins(s) were updated!".format(plugin_count - error_count, plugin_count)
+
+
+@transaction.atomic
+def update_plugins_scores():
+    """Updates the scores for all plugins"""
+
+    plugins = VuePlugin.objects.all()
+
+    download_counts = VuePlugin.objects.values_list('num_downloads_recently', flat=True)
+    github_stars = VuePlugin.objects.values_list('num_stars', flat=True)
+
+    download_count_90th_percentile = np.percentile(download_counts, 90)
+    github_stars_90th_percentile = np.percentile(github_stars, 90)
+
+    for plugin in plugins:
+        score = plugin.non_comparative_score_total
+        # Is the download count in the last 30 days in the top 10% of plugins?
+        if plugin.num_downloads_recently > download_count_90th_percentile:
+            score += 1
+        # Is the Github star count in the top 10% of plugins?
+        if plugin.num_stars > github_stars_90th_percentile:
+            score += 1
+
+        plugin.score = score
+        plugin.save()

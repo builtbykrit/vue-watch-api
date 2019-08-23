@@ -1,5 +1,6 @@
 from django.forms import ModelForm, CharField, IntegerField, BooleanField
 
+from vue_plugins.jobs import update_plugins_scores
 from vue_plugins.models import VuePlugin
 
 
@@ -31,8 +32,12 @@ class VuePluginForm(ModelForm):
         vue_plugin = super(ModelForm, self).save(commit=False)
         # Remove trailing slashes
         vue_plugin.repo_url = vue_plugin.repo_url.rstrip('/')
-        if commit:
-            vue_plugin.save()
 
+        # Update info from github and npm
         vue_plugin.update_external_info()
+        vue_plugin.save()
+
+        # Rescore the plugins
+        update_plugins_scores()
+        vue_plugin.refresh_from_db()
         return vue_plugin

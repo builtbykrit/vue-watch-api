@@ -1,11 +1,99 @@
 import json
 
+from dateutil import relativedelta
+from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APITestCase
 
 # Create your tests here.
 from vue_plugin_scoring.test_helpers import create_vue_plugin
+from vue_plugins.models import VuePlugin
 
+
+class VuePluginScoreTests(TestCase):
+    def test_manual_total(self):
+        """ Each manual review item is worth 1 point except demo"""
+        plugin = VuePlugin.objects.create(
+            name='My Plugin 1',
+            repo_url='github.com',
+            has_example_code=False,
+            has_api_documented=False,
+            has_ci=False,
+            has_demo=False,
+            has_meaningful_tests=False
+        )
+        self.assertEqual(plugin.non_comparative_score_total, 0, 'initial score is 0')
+
+        plugin.has_api_documented = True
+        self.assertEqual(plugin.non_comparative_score_total, 1, 'api documented is worth 1 point')
+
+        plugin.has_example_code = True
+        self.assertEqual(plugin.non_comparative_score_total, 2, 'example code is worth 1 point')
+
+        plugin.has_ci = True
+        self.assertEqual(plugin.non_comparative_score_total, 3, 'ci integration is worth 1 point')
+
+        plugin.has_meaningful_tests = True
+        self.assertEqual(plugin.non_comparative_score_total, 4, 'tests is worth 1 point')
+
+        plugin.has_demo = True
+        self.assertEqual(plugin.non_comparative_score_total, 4, 'demo is not worth any')
+
+    def test_last_release_date_score(self):
+        """ The latest release within the last 12 months shoud"""
+        plugin = VuePlugin.objects.create(
+            name='My Plugin 1',
+            repo_url='github.com',
+            has_example_code=False,
+            has_api_documented=False,
+            has_ci=False,
+            has_demo=False,
+            has_meaningful_tests=False
+        )
+
+        plugin.last_release_date = timezone.now() - relativedelta.relativedelta(months=13)
+        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for release date outside of a year')
+
+        plugin.last_release_date = timezone.now() - relativedelta.relativedelta(months=11)
+        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for release date within the last year')
+
+    def test_num_commits(self):
+        plugin = VuePlugin.objects.create(
+            name='My Plugin 1',
+            repo_url='github.com',
+            has_example_code=False,
+            has_api_documented=False,
+            has_ci=False,
+            has_demo=False,
+            has_meaningful_tests=False
+        )
+
+        plugin.num_commits_recently = 5
+        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for less than 6 recent commits')
+
+        plugin.num_commits_recently = 6
+        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for more than 5 commits')
+
+    def test_num_contributors(self):
+        plugin = VuePlugin.objects.create(
+            name='My Plugin 1',
+            repo_url='github.com',
+            has_example_code=False,
+            has_api_documented=False,
+            has_ci=False,
+            has_demo=False,
+            has_meaningful_tests=False
+        )
+
+        plugin.num_contributors = 1
+        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for only 1 contributor')
+
+        plugin.num_contributors = 7
+        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for more than 1 contributors')
+
+        plugin.num_contributors = 8
+        self.assertEqual(plugin.non_comparative_score_total, 2, 'additional point for more than 7 contributors')
 
 class VuePluginListRetrieveTests(APITestCase):
     def setUp(self):
