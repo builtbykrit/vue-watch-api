@@ -21,6 +21,7 @@ jobs:
         pip install -r requirements.txt
     - name: Test
       env: 
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        SECRET_KEY: super_secret_test
+        DJANGO_ENV: testing
       run: |
         python manage.py test
