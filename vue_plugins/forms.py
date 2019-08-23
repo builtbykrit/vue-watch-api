@@ -1,5 +1,6 @@
 from django.forms import ModelForm, CharField, IntegerField, BooleanField
 
+from vue_plugins.jobs import update_plugins_scores
 from vue_plugins.models import VuePlugin
 
 
@@ -35,4 +36,5 @@ class VuePluginForm(ModelForm):
             vue_plugin.save()
 
         vue_plugin.update_external_info()
+        update_plugins_scores()
         return vue_plugin

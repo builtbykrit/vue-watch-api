@@ -69,11 +69,31 @@ class VuePluginScoreTests(TestCase):
             has_meaningful_tests=False
         )
 
-        plugin.last_release_date = timezone.now() - relativedelta.relativedelta(months=13)
-        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for release date outside of a year')
+        plugin.num_commits_recently = 5
+        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for less than 6 recent commits')
 
-        plugin.last_release_date = timezone.now() - relativedelta.relativedelta(months=11)
-        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for release date within the last year')
+        plugin.num_commits_recently = 6
+        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for more than 5 commits')
+
+    def test_num_contributors(self):
+        plugin = VuePlugin.objects.create(
+            name='My Plugin 1',
+            repo_url='github.com',
+            has_example_code=False,
+            has_api_documented=False,
+            has_ci=False,
+            has_demo=False,
+            has_meaningful_tests=False
+        )
+
+        plugin.num_contributors = 1
+        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for only 1 contributor')
+
+        plugin.num_contributors = 7
+        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for more than 1 contributors')
+
+        plugin.num_contributors = 8
+        self.assertEqual(plugin.non_comparative_score_total, 2, 'additional point for more than 7 contributors')
 
 class VuePluginListRetrieveTests(APITestCase):
     def setUp(self):
