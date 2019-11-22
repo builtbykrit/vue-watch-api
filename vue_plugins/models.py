@@ -2,6 +2,7 @@ import base64
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 # Create your models here.
 from django.utils import timezone
@@ -50,6 +51,8 @@ class VuePlugin(models.Model):
     num_contributors = models.IntegerField(default=0)
     # Download count for last 30 days
     num_downloads_recently = models.IntegerField(default=0, help_text='NPM download count for last 30 days')
+    # Array of downloads per day in the last 30 days
+    downloads_per_day_recently = ArrayField(models.IntegerField(), null=True, help_text='NPM download count per day for the last 30 days')
     num_stars = models.IntegerField(default=0)
 
     # Score
@@ -89,6 +92,8 @@ class VuePlugin(models.Model):
         if self.npm_package_name:
             download_count = client.get_download_count(self.npm_package_name)
             self.num_downloads_recently = download_count
+            downloads_array = client.get_downloads_per_day(self.npm_package_name)
+            se
 
     def _update_info_from_github(self):
         client = GithubApiClient()

@@ -8,6 +8,7 @@ def create_vue_plugin(name, description=None):
     if not description:
         description = fake.text()
 
+    downloads_per_day_array = [fake.pyint(max_value=10000) for _ in range(0,30)]
     plugin = VuePlugin.objects.create(
         name=name,
         description=description,
@@ -25,7 +26,8 @@ def create_vue_plugin(name, description=None):
         num_commits_recently=fake.pyint(max_value=100),
         num_contributors=fake.pyint(max_value=100),
         num_downloads_recently=fake.pyint(max_value=10000),
-        num_stars=fake.pyint(max_value=5000)
+        num_stars=fake.pyint(max_value=5000),
+        downloads_per_day_recently=downloads_per_day_array
     )
 
     plugin.tags.add(fake.word(), fake.word())

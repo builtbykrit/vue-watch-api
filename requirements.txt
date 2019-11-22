@@ -6,7 +6,6 @@ Django==2.2.4
 django-cors-headers==3.0.2
 django-dotenv==1.4.2
 django-extensions==2.2.1
-django-heroku==0.3.1
 django-taggit==1.1.0
 django-taggit-serializer==0.1.7
 djangorestframework==3.10.2
@@ -14,7 +13,7 @@ Faker==2.0.1
 gunicorn==19.9.0
 idna==2.8
 numpy==1.17.0
-psycopg2==2.8.3
+psycopg2==2.8.4
 PyGithub==1.43.7
 PyJWT==1.7.1
 python-dateutil==2.8.0
