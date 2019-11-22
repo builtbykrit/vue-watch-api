@@ -93,7 +93,7 @@ class VuePlugin(models.Model):
             download_count = client.get_download_count(self.npm_package_name)
             self.num_downloads_recently = download_count
             downloads_array = client.get_downloads_per_day(self.npm_package_name)
-            se
+            self.downloads_array = downloads_array
 
     def _update_info_from_github(self):
         client = GithubApiClient()
