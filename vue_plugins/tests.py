@@ -115,6 +115,7 @@ class VuePluginListRetrieveTests(APITestCase):
         first_plugin = response_json['results'][0]
 
         self.assertNotIn('repo_readme', first_plugin, "Repo readmes should not be returned in a list")
+        self.assertNotIn('downloads_per_day_recently', first_plugin, "Download count array should not be returned in a list")
 
     def test_find_plugin_by_name(self):
         """"Retrieving a list of plugins with search should return ones that have a partial name match"""
@@ -165,6 +166,7 @@ class VuePluginListRetrieveTests(APITestCase):
         self.assertEqual(response_json["num_commits_recently"], self.plugin1.num_commits_recently)
         self.assertEqual(response_json["num_contributors"], self.plugin1.num_contributors)
         self.assertEqual(response_json["num_downloads_recently"], self.plugin1.num_downloads_recently)
+        self.assertEqual(response_json["downloads_per_day_recently"], self.plugin1.downloads_per_day_recently)
         self.assertEqual(response_json["num_stars"], self.plugin1.num_stars)
         self.assertEqual(response_json["score"], self.plugin1.score)
         self.assertIn("tags", response_json)
