@@ -1,4 +1,5 @@
 from faker import Faker
+from taggit.models import Tag
 
 from vue_plugins.models import VuePlugin
 
@@ -33,3 +34,11 @@ def create_vue_plugin(name, description=None):
     plugin.tags.add(fake.word(), fake.word())
 
     return plugin
+
+
+def create_tag(name):
+    tag = Tag.objects.create(
+        name=name,
+        slug=name.lower()
+    )
+    return tag
