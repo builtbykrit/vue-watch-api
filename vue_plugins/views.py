@@ -26,7 +26,6 @@ class VuePluginViewSet(ReadOnlyModelViewSet):
         tags_string = self.request.query_params.get('tags', None)
         if tags_string:
             tags = [t for t in tags_string.split(',')]
-            print(tags)
             queryset = queryset.filter(tags__name__in=tags)
 
         return queryset
