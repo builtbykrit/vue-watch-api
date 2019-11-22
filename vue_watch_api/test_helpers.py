@@ -28,7 +28,8 @@ def create_vue_plugin(name, description=None):
         num_contributors=fake.pyint(max_value=100),
         num_downloads_recently=fake.pyint(max_value=10000),
         num_stars=fake.pyint(max_value=5000),
-        downloads_per_day_recently=downloads_per_day_array
+        downloads_per_day_recently=downloads_per_day_array,
+        score=fake.pyint(max_value=10)
     )
 
     plugin.tags.add(fake.word(), fake.word())
