@@ -11,8 +11,8 @@ class VuePluginViewSet(ReadOnlyModelViewSet):
 
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description']
-    ordering_fields = ['score', 'name']
-    ordering = ['score', 'name']
+    ordering_fields = ['-score', 'name']
+    ordering = ['-score', 'name']
 
     def get_serializer_class(self):
         if self.action == 'list':

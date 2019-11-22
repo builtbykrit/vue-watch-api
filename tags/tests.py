@@ -20,8 +20,6 @@ class TagsListTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response_json), 3)
 
-        print(response_json)
-
         self.assertEqual(response_json[0], self.tag2.name)
         self.assertEqual(response_json[1], self.tag3.name)
         self.assertEqual(response_json[2], self.tag1.name)
