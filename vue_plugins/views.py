@@ -18,3 +18,13 @@ class VuePluginViewSet(ReadOnlyModelViewSet):
         if self.action == 'list':
             return serializers.VuePluginListSerializer
         return serializers.VuePluginSerializer
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by tags
+        tags = self.request.query_params.get('tags')
+        if tags:
+            queryset = queryset.filter(tags__name__in=[tags])
+
+        return queryset
