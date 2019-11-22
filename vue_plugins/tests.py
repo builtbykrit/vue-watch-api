@@ -128,6 +128,20 @@ class VuePluginListRetrieveTests(APITestCase):
         self.assertEqual(len(response_json['results']), 1)
         self.assertEqual(response_json['results'][0]['id'], self.plugin2.id)
 
+    def test_filter_by_tag(self):
+        """"Retrieving a list of plugins with tags should return ones that match the tag name"""
+
+        tagged_plugin = create_vue_plugin(name="Vue Plugin")
+        tagged_plugin.tags.add('Utility', 'Filters')
+
+        url = '{}?tags=Filters'.format(reverse('vue_plugins-list'))
+        response = self.client.get(url)
+
+        response_json = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response_json['results']), 1)
+        self.assertEqual(response_json['results'][0]['id'], tagged_plugin.id)
+
     def test_find_plugin_by_description(self):
         """"Retrieving a list of plugins with search should also partial match the description field"""
 
