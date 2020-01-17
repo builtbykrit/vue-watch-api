@@ -31,7 +31,11 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
     "https://vue-plugin-scoring-api.herokuapp.com",
     "http://d3ilfi3okv37rl.cloudfront.net",
-    "http://d34w54d81p4nqr.cloudfront.net"
+    "http://d34w54d81p4nqr.cloudfront.net",
+    "http://dev.vuewatch.com/",
+    "http://vuewatch.com/",
+    "https://dev.vuewatch.com/",
+    "https://vuewatch.com/"
 ]
 
 # Application definition
