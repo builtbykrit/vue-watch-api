@@ -98,9 +98,9 @@ class VuePluginScoreTests(TestCase):
 
 class VuePluginListRetrieveTests(APITestCase):
     def setUp(self):
-        self.plugin1 = create_vue_plugin(name='A Plugin')
-        self.plugin2 = create_vue_plugin(name='B Plugin')
-        self.plugin3 = create_vue_plugin(name='C Plugin')
+        self.plugin1 = create_vue_plugin(name='My Plugin1')
+        self.plugin2 = create_vue_plugin(name='My Plugin2')
+        self.plugin3 = create_vue_plugin(name='My Plugin3')
 
     def test_retrieve_list_of_plugins(self):
         """"Retrieving a list of plugins should all plugins"""
