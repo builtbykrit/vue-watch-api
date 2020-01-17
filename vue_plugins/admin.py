@@ -11,7 +11,7 @@ from vue_plugins.models import VuePlugin
 class VuePluginAdminExtra(ModelAdmin):
     actions = ['update_plugin_info']
     list_display = ['name', 'repo_url', 'tag_list', 'score', 'last_release_date', 'num_commits_recently',
-                    'num_contributors', 'num_stars', 'num_downloads_recently']
+                    'num_contributors', 'num_stars', 'num_downloads_recently', 'has_recent_downloads', 'has_star_status']
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')

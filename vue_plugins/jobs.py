@@ -47,5 +47,5 @@ def update_plugins_scores():
         # Is the Github star count in the top 10% of plugins?
         plugin.has_star_status = plugin.num_stars > github_stars_90th_percentile
 
-        plugin.score = plugin.score_total
+        plugin.score = plugin.calculate_score()
         plugin.save()
