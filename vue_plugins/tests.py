@@ -23,22 +23,22 @@ class VuePluginScoreTests(TestCase):
             has_demo=False,
             has_meaningful_tests=False
         )
-        self.assertEqual(plugin.non_comparative_score_total, 0, 'initial score is 0')
+        self.assertEqual(plugin.calculate_score(), 0, 'initial score is 0')
 
         plugin.has_api_documented = True
-        self.assertEqual(plugin.non_comparative_score_total, 1, 'api documented is worth 1 point')
+        self.assertEqual(plugin.calculate_score(), 1, 'api documented is worth 1 point')
 
         plugin.has_example_code = True
-        self.assertEqual(plugin.non_comparative_score_total, 2, 'example code is worth 1 point')
+        self.assertEqual(plugin.calculate_score(), 2, 'example code is worth 1 point')
 
         plugin.has_ci = True
-        self.assertEqual(plugin.non_comparative_score_total, 3, 'ci integration is worth 1 point')
+        self.assertEqual(plugin.calculate_score(), 3, 'ci integration is worth 1 point')
 
         plugin.has_meaningful_tests = True
-        self.assertEqual(plugin.non_comparative_score_total, 4, 'tests is worth 1 point')
+        self.assertEqual(plugin.calculate_score(), 4, 'tests is worth 1 point')
 
         plugin.has_demo = True
-        self.assertEqual(plugin.non_comparative_score_total, 4, 'demo is not worth any')
+        self.assertEqual(plugin.calculate_score(), 4, 'demo is not worth any')
 
     def test_last_release_date_score(self):
         """ The latest release within the last 12 months shoud"""
@@ -53,10 +53,10 @@ class VuePluginScoreTests(TestCase):
         )
 
         plugin.last_release_date = timezone.now().date() - relativedelta.relativedelta(months=13)
-        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for release date outside of a year')
+        self.assertEqual(plugin.calculate_score(), 0, 'no point for release date outside of a year')
 
         plugin.last_release_date = timezone.now().date() - relativedelta.relativedelta(months=11)
-        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for release date within the last year')
+        self.assertEqual(plugin.calculate_score(), 1, 'one point for release date within the last year')
 
     def test_num_commits(self):
         plugin = VuePlugin.objects.create(
@@ -70,10 +70,10 @@ class VuePluginScoreTests(TestCase):
         )
 
         plugin.num_commits_recently = 2
-        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for less than 6 recent commits')
+        self.assertEqual(plugin.calculate_score(), 0, 'no point for less than 6 recent commits')
 
         plugin.num_commits_recently = 3
-        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for more than 5 commits')
+        self.assertEqual(plugin.calculate_score(), 1, 'one point for more than 5 commits')
 
     def test_num_contributors(self):
         plugin = VuePlugin.objects.create(
@@ -87,13 +87,14 @@ class VuePluginScoreTests(TestCase):
         )
 
         plugin.num_contributors = 1
-        self.assertEqual(plugin.non_comparative_score_total, 0, 'no point for only 1 contributor')
+        self.assertEqual(plugin.calculate_score(), 0, 'no point for only 1 contributor')
 
         plugin.num_contributors = 7
-        self.assertEqual(plugin.non_comparative_score_total, 1, 'one point for more than 1 contributors')
+        self.assertEqual(plugin.calculate_score(), 1, 'one point for more than 1 contributors')
 
         plugin.num_contributors = 8
-        self.assertEqual(plugin.non_comparative_score_total, 2, 'additional point for more than 7 contributors')
+        self.assertEqual(plugin.calculate_score(), 2, 'additional point for more than 7 contributors')
+
 
 class VuePluginListRetrieveTests(APITestCase):
     def setUp(self):
@@ -115,7 +116,8 @@ class VuePluginListRetrieveTests(APITestCase):
         first_plugin = response_json['results'][0]
 
         self.assertNotIn('repo_readme', first_plugin, "Repo readmes should not be returned in a list")
-        self.assertNotIn('downloads_per_day_recently', first_plugin, "Download count array should not be returned in a list")
+        self.assertNotIn('downloads_per_day_recently', first_plugin,
+                         "Download count array should not be returned in a list")
 
         # Test sort order
         previous_score = 0
@@ -124,15 +126,15 @@ class VuePluginListRetrieveTests(APITestCase):
             self.assertTrue(plugin["score"] >= previous_score)
             self.assertTrue(plugin["name"] <= previous_name)
 
-
     def test_find_plugin_by_name(self):
         """"Retrieving a list of plugins with search should return ones that have a partial name match"""
 
-        url = '{}?search=plugin2'.format(reverse('vue_plugins-list'))
+        url = '{}?search=B%20plug'.format(reverse('vue_plugins-list'))
         response = self.client.get(url)
 
         response_json = json.loads(response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
+        print(response_json['results'])
         self.assertEqual(len(response_json['results']), 1)
         self.assertEqual(response_json['results'][0]['id'], self.plugin2.id)
 
@@ -198,6 +200,12 @@ class VuePluginListRetrieveTests(APITestCase):
         self.assertEqual(response_json["has_meaningful_tests"], self.plugin1.has_meaningful_tests == 1)
         self.assertEqual(response_json["has_example_code"], self.plugin1.has_example_code == 1)
         self.assertEqual(response_json["has_api_documented"], self.plugin1.has_api_documented == 1)
+        self.assertEqual(response_json["has_recent_downloads"], self.plugin1.has_recent_downloads)
+        self.assertEqual(response_json["has_star_status"], self.plugin1.has_star_status)
+        self.assertEqual(response_json["has_recent_release"], self.plugin1.has_recent_release)
+        self.assertEqual(response_json["has_recent_commits"], self.plugin1.has_recent_commits)
+        self.assertEqual(response_json["has_many_contributors"], self.plugin1.has_many_contributors)
+        self.assertEqual(response_json["has_multiple_contributors"], self.plugin1.has_multiple_contributors)
 
         self.assertEqual(response_json["last_release_date"], self.plugin1.last_release_date)
         self.assertEqual(response_json["last_release_tag_name"], self.plugin1.last_release_tag_name)

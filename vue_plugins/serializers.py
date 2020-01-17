@@ -21,7 +21,8 @@ class VuePluginSerializer(TaggitSerializer, serializers.ModelSerializer):
                   'has_meaningful_tests', 'has_example_code', 'has_api_documented', 'has_ci', 'has_demo',
                   'last_release_tag_name', 'last_release_date', 'num_commits_recently', 'num_contributors',
                   'num_downloads_recently', 'num_stars', 'score', 'repo_num_open_issues', 'repo_license_name',
-                  'downloads_per_day_recently'
+                  'downloads_per_day_recently', 'has_recent_downloads', 'has_star_status', 'has_recent_release',
+                  'has_recent_commits', 'has_multiple_contributors', 'has_many_contributors'
                   )
 
 
@@ -29,7 +30,6 @@ class VuePluginListSerializer(VuePluginSerializer):
     class Meta:
         model = VuePlugin
         fields = ('id', 'created_at', 'updated_at', 'name', 'description', 'repo_url', 'tags',
-                  'has_meaningful_tests', 'has_example_code', 'has_api_documented', 'has_ci', 'has_demo',
                   'last_release_tag_name', 'last_release_date', 'num_commits_recently', 'num_contributors',
                   'num_downloads_recently', 'num_stars', 'score', 'repo_num_open_issues', 'repo_license_name',
                   )
