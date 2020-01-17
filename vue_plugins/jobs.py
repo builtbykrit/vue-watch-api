@@ -41,13 +41,11 @@ def update_plugins_scores():
     github_stars_90th_percentile = np.percentile(github_stars, 90)
 
     for plugin in plugins:
-        score = plugin.non_comparative_score_total
-        # Is the download count in the last 30 days in the top 10% of plugins?
-        if plugin.num_downloads_recently > download_count_90th_percentile:
-            score += 1
-        # Is the Github star count in the top 10% of plugins?
-        if plugin.num_stars > github_stars_90th_percentile:
-            score += 1
 
-        plugin.score = score
+        # Is the download count in the last 30 days in the top 10% of plugins?
+        plugin.has_recent_downloads = plugin.num_downloads_recently > download_count_90th_percentile
+        # Is the Github star count in the top 10% of plugins?
+        plugin.has_star_status = plugin.num_stars > github_stars_90th_percentile
+
+        plugin.score = plugin.score_total
         plugin.save()

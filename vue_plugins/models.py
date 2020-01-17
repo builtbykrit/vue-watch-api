@@ -44,7 +44,8 @@ class VuePlugin(models.Model):
 
     last_release_tag_name = models.CharField(max_length=256, blank=True)
 
-    # Automated Scoring Fields
+    # Automated Scoring Attributes
+
     last_release_date = models.DateField(null=True, blank=True)
     # Commit count for last 30 days
     num_commits_recently = models.IntegerField(default=0, help_text='Commit count for last 30 days')
@@ -58,25 +59,56 @@ class VuePlugin(models.Model):
     # Score
     score = models.DecimalField(default=0, decimal_places=2, max_digits=5)
 
+    # Automatic Scoring fields/props
+
+    has_recent_downloads = models.BooleanField(default=False)
+    has_star_status = models.BooleanField(default=False)
+
     @property
-    def non_comparative_score_total(self):
-        """ Sum up the fields that arent in comparison with all the plugins"""
+    def has_recent_release(self):
+        """Has there a been a new release in the last year?"""
+        if not self.last_release_date:
+            return False
+        return self.last_release_date + relativedelta(years=1) >= timezone.now().date()
+
+    @property
+    def has_recent_commits(self):
+        """Has there been more than two commits in the last 30 days?"""
+        return self.num_commits_recently > 2
+
+    @property
+    def has_multiple_contributors(self):
+        """Is there more than one contributor on the project?"""
+        return self.num_contributors > 1
+
+    @property
+    def has_many_contributors(self):
+        """Are there more than seven contributors on the project?"""
+        return self.num_contributors > 7
+
+    def calculate_score(self):
+        """ Sum up the scoring fields"""
 
         # Sum the manual review fields
         total = self.has_ci + self.has_meaningful_tests + self.has_example_code + self.has_api_documented
 
         # Has there a been a new release in the last year?
-        if self.last_release_date:
-            total += int(self.last_release_date + relativedelta(years=1) >= timezone.now().date())
+        total += int(self.has_recent_release)
 
         # Has there been more than two commits in the last 30 days?
-        total += int(self.num_commits_recently > 2)
+        total += int(self.has_recent_commits)
 
         # Is there more than one contributor on the project?
-        total += int(self.num_contributors > 1)
+        total += int(self.has_multiple_contributors)
 
         # Are there more than seven contributors on the project?
-        total += int(self.num_contributors > 7)
+        total += int(self.has_many_contributors)
+
+        # Is the download count in the last 30 days in the top 10% of plugins?
+        total += int(self.has_recent_downloads)
+
+        # Is the Github star count in the top 10% of plugins?
+        total += int(self.has_star_status)
 
         return total
 
