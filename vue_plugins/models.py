@@ -69,7 +69,6 @@ class VuePlugin(models.Model):
         """Has there a been a new release in the last year?"""
         if not self.last_release_date:
             return False
-        print(self.last_release_date)
         return self.last_release_date + relativedelta(years=1) >= timezone.now().date()
 
     @property

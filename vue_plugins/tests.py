@@ -129,7 +129,7 @@ class VuePluginListRetrieveTests(APITestCase):
     def test_find_plugin_by_name(self):
         """"Retrieving a list of plugins with search should return ones that have a partial name match"""
 
-        url = '{}?search=B%20plug'.format(reverse('vue_plugins-list'))
+        url = '{}?search=plugin2'.format(reverse('vue_plugins-list'))
         response = self.client.get(url)
 
         response_json = json.loads(response.content.decode('utf-8'))
@@ -207,7 +207,7 @@ class VuePluginListRetrieveTests(APITestCase):
         self.assertEqual(response_json["has_many_contributors"], self.plugin1.has_many_contributors)
         self.assertEqual(response_json["has_multiple_contributors"], self.plugin1.has_multiple_contributors)
 
-        self.assertEqual(response_json["last_release_date"], self.plugin1.last_release_date)
+        self.assertEqual(response_json["last_release_date"], self.plugin1.last_release_date.strftime('%Y-%m-%d'))
         self.assertEqual(response_json["last_release_tag_name"], self.plugin1.last_release_tag_name)
         self.assertEqual(response_json["num_commits_recently"], self.plugin1.num_commits_recently)
         self.assertEqual(response_json["num_contributors"], self.plugin1.num_contributors)
